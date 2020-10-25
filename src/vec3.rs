@@ -34,11 +34,11 @@ impl Vec3 {
         self.e[0] * self.e[0] + self.e[1] * self.e[1] + self.e[2] * self.e[2]
     }
 
-    pub fn dot(&self, rhs: &Self) -> f64 {
+    pub fn dot(&self, rhs: Self) -> f64 {
         self.e[0] * rhs.e[0] + self.e[1] * rhs.e[1] + self.e[2] * rhs.e[2]
     }
 
-    pub fn cross(&self, rhs: &Self) -> Self {
+    pub fn cross(&self, rhs: Self) -> Self {
         Vec3 {
             e: [
                 self.e[1] * rhs.e[2] - self.e[2] * rhs.e[1],
@@ -48,8 +48,8 @@ impl Vec3 {
         }
     }
 
-    pub fn unit(self) -> Self {
-        self / self.length()
+    pub fn unit(&self) -> Self {
+        *self / self.length()
     }
 }
 
