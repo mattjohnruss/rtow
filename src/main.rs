@@ -20,10 +20,23 @@ fn render() {
     let vertical = Vec3::new(0.0, viewport_height, 0.0);
     let lower_left_corner = origin - Vec3::new(0.0, 0.0, focal_length) - horizontal / 2.0 - vertical / 2.0;
 
+    fn hit_sphere(centre: Point3, radius: f64, ray: &Ray) -> bool {
+        let origin_centre = ray.origin() - centre;
+        let a = ray.direction().length_squared();
+        let b = 2.0 * ray.direction().dot(origin_centre);
+        let c = origin_centre.length_squared() - radius * radius;
+        let discriminant = b * b - 4.0 * a * c;
+        discriminant > 0.0
+    }
+
     fn ray_colour(ray: Ray) -> Colour {
-        let unit_direction = ray.direction().unit();
-        let t = 0.5 * (unit_direction.y() + 1.0);
-        (1.0 - t) * Colour::new(1.0, 1.0, 1.0) + t * Colour::new(0.5, 0.7, 1.0)
+        if hit_sphere(Point3::new(0.0, 0.0, -1.0), 0.5, &ray) {
+            Colour::new(1.0, 0.0, 0.0)
+        } else {
+            let unit_direction = ray.direction().unit();
+            let t = 0.5 * (unit_direction.y() + 1.0);
+            (1.0 - t) * Colour::new(1.0, 1.0, 1.0) + t * Colour::new(0.5, 0.7, 1.0)
+        }
     }
 
     // Header
