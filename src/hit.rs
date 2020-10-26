@@ -28,19 +28,7 @@ pub struct HittableList {
 
 impl HittableList {
     pub fn new() -> Self {
-        HittableList {
-            objects: vec![],
-        }
-    }
-
-    pub fn with_object(object: Box<dyn Hittable>) -> Self {
-        HittableList {
-            objects: vec![object],
-        }
-    }
-
-    pub fn clear(&mut self) {
-        self.objects.clear();
+        HittableList { objects: vec![] }
     }
 
     pub fn add(&mut self, object: impl Hittable + 'static) {

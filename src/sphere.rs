@@ -26,7 +26,12 @@ impl Hittable for Sphere {
                 let p = ray.at(t);
                 let outward_normal = (p - self.centre) / self.radius;
                 let (front_face, normal) = hit::face_normal(&ray, &outward_normal);
-                Some(Hit { p, normal, t, front_face })
+                Some(Hit {
+                    p,
+                    normal,
+                    t,
+                    front_face,
+                })
             } else {
                 None
             }
