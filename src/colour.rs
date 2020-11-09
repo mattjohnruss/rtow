@@ -1,8 +1,8 @@
 use crate::vec3::*;
-use std::io::prelude::*;
+use std::io::Write;
 
-pub fn write<W: Write>(
-    out: &mut W,
+pub fn write(
+    out: &mut impl Write,
     pixel_colour: Colour,
     samples_per_pixel: usize,
 ) -> std::io::Result<()> {
