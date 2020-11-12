@@ -25,12 +25,12 @@ impl Hittable for Sphere {
             if t > t_min && t < t_max {
                 let p = ray.at(t);
                 let outward_normal = (p - self.centre) / self.radius;
-                let (front_face, normal) = hit::face_normal(&ray, &outward_normal);
+                let (_front_face, normal) = hit::face_normal(&ray, &outward_normal);
                 Some(Hit {
                     p,
                     normal,
                     t,
-                    front_face,
+                    //front_face,
                 })
             } else {
                 None

@@ -5,7 +5,7 @@ pub struct Hit {
     pub(crate) p: Point3,
     pub(crate) normal: Vec3,
     pub(crate) t: f64,
-    pub(crate) front_face: bool,
+    //pub(crate) front_face: bool,
 }
 
 pub trait Hittable {
