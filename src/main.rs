@@ -24,9 +24,14 @@ where
     (1.0 - s) * t_1 + s * t_2
 }
 
-fn ray_colour(ray: Ray, world: &impl Hittable) -> Colour {
-    if let Some(hit) = world.hit(&ray, 0.0, f64::INFINITY) {
-        0.5 * (hit.normal + Colour::new(1.0, 1.0, 1.0))
+fn ray_colour(ray: Ray, world: &impl Hittable, recursion_depth: usize) -> Colour {
+    if recursion_depth == 0 {
+        return Colour::new(0.0, 0.0, 0.0);
+    }
+
+    if let Some(hit) = world.hit(&ray, 0.001, f64::INFINITY) {
+        let target = hit.p + Vec3::random_in_unit_half_ball(hit.normal);
+        0.5 * ray_colour(Ray::new(hit.p, target - hit.p), world, recursion_depth - 1)
     } else {
         const BG_COLOUR_1: Colour = Colour::new(1.0, 1.0, 1.0);
         const BG_COLOUR_2: Colour = Colour::new(0.5, 0.7, 1.0);
@@ -41,6 +46,7 @@ fn render() {
     const IMAGE_WIDTH: usize = 400;
     const IMAGE_HEIGHT: usize = (IMAGE_WIDTH as f64 / ASPECT_RATIO) as usize;
     const SAMPLES_PER_PIXEL: usize = 100;
+    const MAX_RECURSION_DEPTH: usize = 50;
 
     let mut world = HittableList::new();
     world.add(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5));
@@ -65,7 +71,7 @@ fn render() {
                 let u = (i as f64 + rng.sample(uniform_dist)) / (IMAGE_WIDTH - 1) as f64;
                 let v = (j as f64 + rng.sample(uniform_dist)) / (IMAGE_HEIGHT - 1) as f64;
                 let ray = camera.get_ray(u, v);
-                pixel_colour += ray_colour(ray, &world);
+                pixel_colour += ray_colour(ray, &world, MAX_RECURSION_DEPTH);
             }
             colour::write(&mut std::io::stdout(), pixel_colour, SAMPLES_PER_PIXEL)
                 .expect("failed to write pixel colour to stdout");

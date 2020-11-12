@@ -1,4 +1,5 @@
 use std::ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub};
+use rand_distr::{Distribution, Uniform, UnitBall, UnitSphere};
 
 #[derive(Debug, Copy, Clone)]
 pub struct Vec3 {
@@ -12,6 +13,36 @@ impl Vec3 {
 
     pub fn zero() -> Self {
         Vec3 { e: [0.0; 3] }
+    }
+
+    pub fn random() -> Self {
+        Vec3::random_range(0.0, 1.0)
+    }
+
+    pub fn random_range(min: f64, max: f64) -> Self {
+        let uniform_dist = Uniform::new(min, max);
+        let mut rng = rand::thread_rng();
+        let x = uniform_dist.sample(&mut rng);
+        let y = uniform_dist.sample(&mut rng);
+        let z = uniform_dist.sample(&mut rng);
+        Vec3 { e: [x, y, z] }
+    }
+
+    pub fn random_in_unit_ball() -> Self {
+        Vec3 { e: UnitBall.sample(&mut rand::thread_rng()) }
+    }
+
+    pub fn random_in_unit_half_ball(normal: Vec3) -> Self {
+        let in_unit_ball = Vec3::random_in_unit_ball();
+        if in_unit_ball.dot(normal) > 0.0 {
+            in_unit_ball
+        } else {
+            -in_unit_ball
+        }
+    }
+
+    pub fn random_on_unit_sphere() -> Self {
+        Vec3 { e: UnitSphere.sample(&mut rand::thread_rng()) }
     }
 
     pub fn x(&self) -> f64 {
