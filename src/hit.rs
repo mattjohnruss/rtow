@@ -1,9 +1,12 @@
 use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
+use crate::material::Material;
+use std::rc::Rc;
 
 pub struct Hit {
     pub(crate) p: Point3,
     pub(crate) normal: Vec3,
+    pub(crate) material: Rc<dyn Material>,
     pub(crate) t: f64,
     //pub(crate) front_face: bool,
 }

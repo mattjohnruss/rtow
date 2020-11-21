@@ -6,15 +6,18 @@ mod hit;
 mod ray;
 mod sphere;
 mod vec3;
+mod material;
 
 use crate::camera::{Camera, ASPECT_RATIO};
 use crate::hit::{Hittable, HittableList};
 use crate::ray::Ray;
 use crate::sphere::Sphere;
 use crate::vec3::{Colour, Vec3};
+use crate::material::{Lambertian, Metal};
 use rand::prelude::*;
 use std::io::prelude::*;
 use std::ops::{Add, Mul};
+use std::rc::Rc;
 
 fn lerp<T>(s: f64, t_1: T, t_2: T) -> T
 where
@@ -30,8 +33,11 @@ fn ray_colour(ray: Ray, world: &impl Hittable, recursion_depth: usize) -> Colour
     }
 
     if let Some(hit) = world.hit(&ray, 0.001, f64::INFINITY) {
-        let target = hit.p + Vec3::random_in_unit_half_ball(hit.normal);
-        0.5 * ray_colour(Ray::new(hit.p, target - hit.p), world, recursion_depth - 1)
+        if let Some((attenuation, scattered)) = hit.material.scatter(&ray, &hit) {
+            attenuation * ray_colour(scattered, world, recursion_depth - 1)
+        } else {
+            Colour::zero()
+        }
     } else {
         const BG_COLOUR_1: Colour = Colour::new(1.0, 1.0, 1.0);
         const BG_COLOUR_2: Colour = Colour::new(0.5, 0.7, 1.0);
@@ -48,9 +54,16 @@ fn render() {
     const SAMPLES_PER_PIXEL: usize = 100;
     const MAX_RECURSION_DEPTH: usize = 50;
 
+    let material_ground = Rc::new(Lambertian::new(Colour::new(0.8, 0.8, 0.0)));
+    let material_centre = Rc::new(Lambertian::new(Colour::new(0.7, 0.3, 0.3)));
+    let material_left = Rc::new(Metal::new(Colour::new(0.8, 0.8, 0.8), 0.3));
+    let material_right = Rc::new(Metal::new(Colour::new(0.8, 0.6, 0.2), 1.0));
+
     let mut world = HittableList::new();
-    world.add(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5));
-    world.add(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0));
+    world.add(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0, material_ground));
+    world.add(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5, material_centre));
+    world.add(Sphere::new(Vec3::new(-1.0, 0.0, -1.0), 0.5, material_left));
+    world.add(Sphere::new(Vec3::new(1.0, 0.0, -1.0), 0.5, material_right));
 
     let camera = Camera::new();
 

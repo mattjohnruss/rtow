@@ -65,6 +65,11 @@ impl Vec3 {
         self.e[0] * self.e[0] + self.e[1] * self.e[1] + self.e[2] * self.e[2]
     }
 
+    pub fn is_near_zero(&self) -> bool {
+        const EPS: f64 = 1.0e-8;
+        self.e[0].abs() < EPS && self.e[1].abs() < EPS && self.e[2].abs() < EPS
+    }
+
     pub fn dot(&self, rhs: Self) -> f64 {
         self.e[0] * rhs.e[0] + self.e[1] * rhs.e[1] + self.e[2] * rhs.e[2]
     }
@@ -81,6 +86,10 @@ impl Vec3 {
 
     pub fn unit(&self) -> Self {
         *self / self.length()
+    }
+
+    pub fn reflect(&self, n: Vec3) -> Self {
+        *self - 2.0 * self.dot(n) * n
     }
 }
 
