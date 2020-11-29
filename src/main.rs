@@ -1,7 +1,6 @@
 #![feature(clamp)]
 
 mod camera;
-mod colour;
 mod hit;
 mod ray;
 mod sphere;
@@ -86,7 +85,7 @@ fn render() {
                 let ray = camera.get_ray(u, v);
                 pixel_colour += ray_colour(ray, &world, MAX_RECURSION_DEPTH);
             }
-            colour::write(&mut std::io::stdout(), pixel_colour, SAMPLES_PER_PIXEL)
+            pixel_colour.write(&mut std::io::stdout(), SAMPLES_PER_PIXEL)
                 .expect("failed to write pixel colour to stdout");
         }
     }

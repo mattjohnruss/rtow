@@ -1,5 +1,6 @@
 use std::ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub};
 use rand_distr::{Distribution, Uniform, UnitBall, UnitSphere};
+use std::io::Write;
 
 #[derive(Debug, Copy, Clone)]
 pub struct Vec3 {
@@ -203,3 +204,25 @@ impl Div<f64> for Vec3 {
 
 pub type Point3 = Vec3;
 pub type Colour = Vec3;
+
+impl Colour {
+    pub fn write(
+        &self,
+        out: &mut impl Write,
+        samples_per_pixel: usize,
+    ) -> std::io::Result<()> {
+        let scale = 1.0 / samples_per_pixel as f64;
+
+        let r = (scale * self.x()).sqrt();
+        let g = (scale * self.y()).sqrt();
+        let b = (scale * self.z()).sqrt();
+
+        writeln!(
+            out,
+            "{} {} {}",
+            (256.0 * r.clamp(0.0, 0.999)) as usize,
+            (256.0 * g.clamp(0.0, 0.999)) as usize,
+            (256.0 * b.clamp(0.0, 0.999)) as usize,
+        )
+    }
+}
