@@ -2,7 +2,7 @@ use crate::hit::Hit;
 use crate::ray::Ray;
 use crate::vec3::{Colour, Vec3};
 
-pub trait Material {
+pub trait Material: Send + Sync {
     fn scatter(&self, ray: &Ray, hit: &Hit) -> Option<(Colour, Ray)>;
 }
 

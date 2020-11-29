@@ -1,17 +1,17 @@
+use crate::material::Material;
 use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
-use crate::material::Material;
-use std::rc::Rc;
+use std::sync::Arc;
 
 pub struct Hit {
     pub(crate) p: Point3,
     pub(crate) normal: Vec3,
-    pub(crate) material: Rc<dyn Material>,
+    pub(crate) material: Arc<dyn Material>,
     pub(crate) t: f64,
     //pub(crate) front_face: bool,
 }
 
-pub trait Hittable {
+pub trait Hittable: Sync {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<Hit>;
 }
 

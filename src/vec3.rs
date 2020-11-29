@@ -1,6 +1,6 @@
-use std::ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub};
 use rand_distr::{Distribution, Uniform, UnitBall, UnitSphere};
 use std::io::Write;
+use std::ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub};
 
 #[derive(Debug, Copy, Clone)]
 pub struct Vec3 {
@@ -30,7 +30,9 @@ impl Vec3 {
     }
 
     pub fn random_in_unit_ball() -> Self {
-        Vec3 { e: UnitBall.sample(&mut rand::thread_rng()) }
+        Vec3 {
+            e: UnitBall.sample(&mut rand::thread_rng()),
+        }
     }
 
     pub fn random_in_unit_half_ball(normal: Vec3) -> Self {
@@ -43,7 +45,9 @@ impl Vec3 {
     }
 
     pub fn random_on_unit_sphere() -> Self {
-        Vec3 { e: UnitSphere.sample(&mut rand::thread_rng()) }
+        Vec3 {
+            e: UnitSphere.sample(&mut rand::thread_rng()),
+        }
     }
 
     pub fn x(&self) -> f64 {
@@ -206,11 +210,22 @@ pub type Point3 = Vec3;
 pub type Colour = Vec3;
 
 impl Colour {
-    pub fn write(
-        &self,
-        out: &mut impl Write,
-        samples_per_pixel: usize,
-    ) -> std::io::Result<()> {
+    pub fn to_string(&self, samples_per_pixel: usize) -> String {
+        let scale = 1.0 / samples_per_pixel as f64;
+
+        let r = (scale * self.x()).sqrt();
+        let g = (scale * self.y()).sqrt();
+        let b = (scale * self.z()).sqrt();
+
+        format!(
+            "{} {} {}",
+            (256.0 * r.clamp(0.0, 0.999)) as usize,
+            (256.0 * g.clamp(0.0, 0.999)) as usize,
+            (256.0 * b.clamp(0.0, 0.999)) as usize,
+        )
+    }
+
+    pub fn write(&self, out: &mut impl Write, samples_per_pixel: usize) -> std::io::Result<()> {
         let scale = 1.0 / samples_per_pixel as f64;
 
         let r = (scale * self.x()).sqrt();
