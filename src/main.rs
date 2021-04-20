@@ -1,5 +1,3 @@
-#![feature(clamp)]
-
 mod camera;
 mod hit;
 mod material;
